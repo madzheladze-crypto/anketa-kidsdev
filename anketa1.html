@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Анкета для родителей — KidsDev</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #F5F3EE;
+    color: #141414;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 48px 16px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .wrap { width: 100%; max-width: 720px; display: flex; flex-direction: column; gap: 20px; }
+
+  .header {
+    background: #FFD856;
+    border-radius: 28px;
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
+  .season { font-size: 14px; font-weight: 600; color: #6A5C22; text-align: right; line-height: 1.4; }
+  h1 { margin: 0; font-size: 34px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; }
+  .subtitle { margin: 0; font-size: 16px; line-height: 1.45; font-weight: 500; color: #4A3F14; }
+
+  .section-title {
+    display: flex; align-items: center; gap: 14px; padding: 8px 4px 0;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .dot.blue { background: #3B7BFF; }
+  .dot.red { background: #E9484D; }
+  .section-title h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+
+  .card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .badge-row { display: flex; align-items: center; gap: 14px; }
+  .badge {
+    flex: none; width: 36px; height: 36px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700;
+  }
+  .badge.yellow { background: #FFD856; }
+  .badge.blue { background: #3B7BFF; color: #fff; }
+  .badge.red { background: #E9484D; color: #fff; }
+  .tag { font-size: 13px; font-weight: 600; color: #8A857A; letter-spacing: 0.06em; }
+  .q { margin: 0; font-size: 21px; line-height: 1.25; font-weight: 700; }
+  .hint { margin: 0; font-size: 15px; line-height: 1.45; color: #8A857A; }
+  .subq { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 1px solid #E7E3DA; }
+  .subq h4 { margin: 0; font-size: 18px; line-height: 1.3; font-weight: 700; }
+
+  input[type="text"], textarea {
+    box-sizing: border-box; width: 100%;
+    font-family: inherit; font-size: 16px; color: #141414;
+    background: #F5F3EE; border: 1px solid #E7E3DA; border-radius: 14px;
+    padding: 14px 16px; outline: none;
+  }
+  input[type="text"]:focus, textarea:focus { border-color: #3B7BFF; }
+  textarea { min-height: 90px; resize: vertical; line-height: 1.45; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 520px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+
+  .options { display: flex; gap: 10px; flex-wrap: wrap; }
+  .options.stack { flex-direction: column; }
+  label.opt {
+    display: flex; align-items: center; gap: 12px;
+    background: #F5F3EE; border: 1px solid #E7E3DA; border-radius: 999px;
+    padding: 12px 20px; font-size: 16px; font-weight: 500; cursor: pointer;
+  }
+  .options.stack label.opt { border-radius: 14px; }
+  label.opt:hover { border-color: #3B7BFF; }
+  label.opt input { width: 18px; height: 18px; accent-color: #3B7BFF; margin: 0; flex: none; }
+
+  .submit-bar {
+    background: #3B7BFF; border-radius: 24px; padding: 26px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap;
+  }
+  .status { font-size: 17px; font-weight: 600; color: #fff; max-width: 380px; }
+  button#submitBtn {
+    font-family: inherit; font-size: 17px; font-weight: 700; color: #141414;
+    background: #FFD856; border: none; border-radius: 999px;
+    padding: 15px 36px; cursor: pointer;
+  }
+  button#submitBtn:hover { background: #FFE27E; }
+  button#submitBtn:disabled { opacity: 0.6; cursor: default; }
+
+  @media (max-width: 600px) {
+    body { padding: 28px 10px 60px; }
+    .header, .card { padding: 24px 20px; }
+    h1 { font-size: 27px; }
+    .q { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">KIDSDEV</div>
+      <div class="season">Академия будущего<br>Сезон 2026</div>
+    </div>
+    <h1>Анкета для родителей</h1>
+    <p class="subtitle">11 вопросов, 4–5 минут. Ваши ответы помогают наставнику выстроить работу с ребёнком и повышать качество клиентского сервиса.</p>
+  </div>
+
+  <form id="anketaForm">
+
+    <div class="section-title"><span class="dot blue"></span><h2>Про ребёнка</h2></div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge yellow">1</span><span class="tag">КОРОТКИЙ ОТВЕТ</span></div>
+      <h3 class="q">ФИО ребёнка</h3>
+      <input type="text" name="child_name" placeholder="Фамилия, имя, отчество">
+    </div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge blue">2</span><span class="tag">ОДИН ВАРИАНТ</span></div>
+      <h3 class="q">Программа</h3>
+      <div class="options stack">
+        <label class="opt"><input type="radio" name="program" value="Я — предприниматель">Я — предприниматель</label>
+        <label class="opt"><input type="radio" name="program" value="Умные коммуникации">Умные коммуникации</label>
+        <label class="opt"><input type="radio" name="program" value="Оазис">Оазис</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge blue">3</span><span class="tag">ОДИН ВАРИАНТ</span></div>
+      <h3 class="q">Тариф</h3>
+      <div class="options">
+        <label class="opt"><input type="radio" name="tarif" value="Базовый">Базовый</label>
+        <label class="opt"><input type="radio" name="tarif" value="Стандарт">Стандарт</label>
+        <label class="opt"><input type="radio" name="tarif" value="Премиум">Премиум</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge yellow">4</span><span class="tag">РАЗВЁРНУТЫЙ ОТВЕТ</span></div>
+      <h3 class="q">Чем ребёнок увлекается, что ему интересно?</h3>
+      <textarea name="interests" placeholder="Ваш ответ"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge yellow">5</span><span class="tag">РАЗВЁРНУТЫЙ ОТВЕТ</span></div>
+      <h3 class="q">Какие сильные стороны вы бы хотели, чтобы курс раскрыл?</h3>
+      <textarea name="strengths" placeholder="Ваш ответ"></textarea>
+    </div>
+
+    <div class="section-title"><span class="dot red"></span><h2>Про вас и ожидания</h2></div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge yellow">6</span><span class="tag">РАЗВЁРНУТЫЙ ОТВЕТ</span></div>
+      <h3 class="q">Как вы поймёте, что курс был полезен вашему ребёнку?</h3>
+      <textarea name="success" placeholder="Ваш ответ"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge yellow">7</span><span class="tag">РАЗВЁРНУТЫЙ ОТВЕТ</span></div>
+      <h3 class="q">Был ли опыт похожих курсов или лагерей — что откликнулось, а что нет?</h3>
+      <textarea name="experience" placeholder="Ваш ответ" style="min-height:110px"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge blue">8</span><span class="tag">ОДИН ВАРИАНТ</span></div>
+      <h3 class="q">Готов ли ребёнок выполнять домашние задания наставника?</h3>
+      <p class="hint">Между занятиями наставник даёт задания по проекту. Результат курса складывается из работы Академии, ребёнка и семьи.</p>
+      <div class="options stack">
+        <label class="opt"><input type="radio" name="homework" value="Да, готов заниматься самостоятельно">Да, готов заниматься самостоятельно</label>
+        <label class="opt"><input type="radio" name="homework" value="Да, с поддержкой родителей">Да, с поддержкой родителей</label>
+        <label class="opt"><input type="radio" name="homework" value="Пока не уверены">Пока не уверены</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge blue">9</span><span class="tag">ОДИН ВАРИАНТ</span></div>
+      <h3 class="q">Удобный канал связи</h3>
+      <div class="options">
+        <label class="opt"><input type="radio" name="channel" value="Звонок">Звонок</label>
+        <label class="opt"><input type="radio" name="channel" value="Telegram">Telegram</label>
+        <label class="opt"><input type="radio" name="channel" value="MAX">MAX</label>
+        <label class="opt"><input type="radio" name="channel" value="Email">Email</label>
+      </div>
+      <div class="grid2">
+        <input type="text" name="contact" placeholder="Телефон или email для связи">
+        <input type="text" name="telegram" placeholder="Ник в Telegram или MAX, например @kidsdev">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge yellow">10</span><span class="tag">ДВА КОРОТКИХ ОТВЕТА</span></div>
+      <h3 class="q">Как вы узнали о KidsDev?</h3>
+      <input type="text" name="source" placeholder="Ваш ответ">
+      <div class="subq">
+        <h4>В какой сфере вы работаете?</h4>
+        <p class="hint">Родители часто становятся гостями занятий и экскурсий — будем рады, если поделитесь опытом с ребятами.</p>
+        <input type="text" name="parent_field" placeholder="Сфера деятельности">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="badge-row"><span class="badge red">11</span><span class="tag">НЕСКОЛЬКО ВАРИАНТОВ</span></div>
+      <h3 class="q">Когда у вашего ребёнка осенние каникулы?</h3>
+      <p class="hint">На осенних каникулах KIDSDEV проведёт лагерь. Отметьте свои даты — и напишите, интересен ли вам лагерь.</p>
+      <div class="options stack">
+        <label class="opt"><input type="checkbox" name="holidays_1" value="19 — 25 октября">19 — 25 октября</label>
+        <label class="opt"><input type="checkbox" name="holidays_2" value="26 октября — 1 ноября">26 октября — 1 ноября</label>
+        <label class="opt"><input type="checkbox" name="holidays_3" value="2 — 8 ноября">2 — 8 ноября</label>
+      </div>
+      <input type="text" name="holidays_other" placeholder="Другие даты">
+      <div class="subq">
+        <h4>Интересен ли осенний лагерь KIDSDEV?</h4>
+        <div class="options">
+          <label class="opt"><input type="radio" name="camp" value="Да, расскажите подробнее">Да, расскажите подробнее</label>
+          <label class="opt"><input type="radio" name="camp" value="Возможно">Возможно</label>
+          <label class="opt"><input type="radio" name="camp" value="Нет">Нет</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-bar">
+      <span class="status" id="statusText">Спасибо! Мы изучим ваши ответы, чтобы точнее выстроить работу.</span>
+      <button type="submit" id="submitBtn">Отправить</button>
+    </div>
+
+  </form>
+
+</div>
+
+<script>
+  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBak1trUP3Xy4p8rlXiQhAC-gZz1C3D_NVRpmI5hT2gI7I-L9NxJkvdTrifnNOhe2I/exec";
+
+  var form = document.getElementById('anketaForm');
+  var statusText = document.getElementById('statusText');
+  var submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    if (!SCRIPT_URL || SCRIPT_URL.indexOf('ВСТАВЬТЕ') !== -1) {
+      statusText.textContent = 'Форма не подключена к таблице: укажите ссылку Web App в коде (переменная SCRIPT_URL).';
+      return;
+    }
+
+    var data = new URLSearchParams(new FormData(form));
+
+    submitBtn.disabled = true;
+    statusText.textContent = 'Отправляем…';
+
+    fetch(SCRIPT_URL, { method: 'POST', body: data })
+      .then(function () {
+        statusText.textContent = 'Спасибо! Ждём вас в Академии.';
+        form.reset();
+      })
+      .catch(function () {
+        statusText.textContent = 'Не удалось отправить. Попробуйте ещё раз или напишите нам.';
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+      });
+  });
+</script>
+
+</body>
+</html>
