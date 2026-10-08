@@ -144,6 +144,7 @@
         <label class="opt"><input type="radio" name="program" value="Умные коммуникации">Умные коммуникации</label>
         <label class="opt"><input type="radio" name="program" value="Оазис">Оазис</label>
       </div>
+      <input type="text" name="program_other" id="programOther" placeholder="Другая программа — впишите название">
     </div>
 
     <div class="card">
@@ -255,6 +256,17 @@
   var statusText = document.getElementById('statusText');
   var submitBtn = document.getElementById('submitBtn');
 
+  // Вписали свою программу — снимаем выбор с вариантов, и наоборот
+  var programOtherInput = document.getElementById('programOther');
+  programOtherInput.addEventListener('input', function () {
+    if (programOtherInput.value.trim()) {
+      form.querySelectorAll('input[name="program"]').forEach(function (r) { r.checked = false; });
+    }
+  });
+  form.querySelectorAll('input[name="program"]').forEach(function (r) {
+    r.addEventListener('change', function () { programOtherInput.value = ''; });
+  });
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -264,6 +276,10 @@
     }
 
     var data = new URLSearchParams(new FormData(form));
+    // «Другая программа» уходит в тот же столбец «Программа»
+    var programOther = (data.get('program_other') || '').trim();
+    if (programOther) data.set('program', programOther);
+    data.delete('program_other');
 
     submitBtn.disabled = true;
     statusText.textContent = 'Отправляем…';
