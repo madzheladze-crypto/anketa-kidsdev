@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Опросник для родителей — Я предприниматель</title>
+<title>Опросник для родителей — KidsDev</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -66,6 +66,11 @@ textarea{min-height:104px;resize:vertical}
 .opt input:checked+span{background:var(--red);border-color:var(--red);color:#fff}
 .opt input:focus-visible+span{outline:3px solid rgba(232,72,77,.35);outline-offset:2px}
 .yn .opt span{min-width:96px}
+.sel{position:relative}
+.sel::after{content:"";position:absolute;right:18px;top:50%;width:9px;height:9px;border-right:2px solid var(--red);border-bottom:2px solid var(--red);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+select{width:100%;appearance:none;-webkit-appearance:none;font:inherit;font-size:16px;font-weight:600;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:14px 44px 14px 16px;outline:none;cursor:pointer}
+select:focus{border-color:var(--red);background:#fff}
+select:invalid,select option[value=""]{color:var(--muted)}
 
 /* Шкала */
 .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
@@ -105,7 +110,7 @@ button:disabled{opacity:.6;cursor:default}
   <header class="hero">
     <div class="hero-top">
       <div class="brand">KIDSDEV</div>
-      <div class="chip">Я — предприниматель</div>
+      <div class="chip">Обратная связь</div>
     </div>
     <h1>Опросник для родителей</h1>
     <p>Расскажите, как курс отзывается у вашего ребёнка. Ваши ответы помогают тренерам и команде KidsDev делать занятия сильнее.</p>
@@ -140,7 +145,8 @@ var FORM_NAME = "Опросник родителей ЯП";
 var SPEC = [
   {title:"О ребёнке", qs:[
     {id:"child", col:"ФИО ребёнка", type:"text", req:true, q:"Имя и фамилия ребёнка", ph:"Например, Иван Петров"},
-    {id:"group", col:"Группа", type:"one", req:true, q:"Группа", opts:["Сколково 7+","Сколково 10+","Сколково 13+","Ильинка"]}
+    {id:"course", col:"Курс", type:"one", other:true, req:true, q:"Какой курс проходит ребёнок?", opts:["Я — предприниматель","Оазис","Умные коммуникации","Маршрут построен"]},
+    {id:"age", col:"Возрастная группа", type:"select", req:true, q:"Возрастная группа", opts:["7+","10+","13+"]}
   ]},
   {title:"Прогресс и достижения", qs:[
     {id:"p1", col:"Видите положительные изменения в знаниях и навыках", type:"yn", req:true, q:"Замечаете ли вы положительные изменения в знаниях и навыках ребёнка?"},
@@ -182,7 +188,8 @@ function render(){
       if(q.type==="text") h+='<input type="text" name="'+q.id+'" placeholder="'+esc(q.ph||"Ваш ответ")+'" autocomplete="off">';
       if(q.type==="long") h+='<textarea name="'+q.id+'" placeholder="'+esc(q.ph||"Ваш ответ")+'"></textarea>';
       if(q.type==="yn") h+='<div class="opts yn">'+opt(q.id,"Да","Да")+opt(q.id,"Нет","Нет")+'</div>';
-      if(q.type==="one") h+='<div class="opts">'+q.opts.map(function(o){return opt(q.id,o,o)}).join("")+'</div>';
+      if(q.type==="one"){ h+='<div class="opts">'+q.opts.map(function(o){return opt(q.id,o,o)}).join("")+'</div>'; if(q.other) h+='<input type="text" class="other" name="'+q.id+'_other" data-for="'+q.id+'" placeholder="Другой курс — впишите название" autocomplete="off">'; }
+      if(q.type==="select") h+='<div class="sel"><select name="'+q.id+'"><option value="">Выберите группу</option>'+q.opts.map(function(o){return '<option value="'+esc(o)+'">'+esc(o)+'</option>'}).join("")+'</select></div>';
       if(q.type==="scale"){
         h+='<div class="scale">'+[1,2,3,4,5].map(function(n){return opt(q.id,n,n)}).join("")+'</div>';
         h+='<div class="anchors"><span>1 — '+esc(q.lo)+'</span><span>5 — '+esc(q.hi)+'</span></div>';
@@ -196,7 +203,8 @@ function render(){
 
 var form=document.getElementById("form");
 function val(q){
-  if(q.type==="text"||q.type==="long"){var el=form.elements[q.id];return el?el.value.trim():""}
+  if(q.type==="text"||q.type==="long"||q.type==="select"){var el=form.elements[q.id];return el?el.value.trim():""}
+  if(q.other){var o=form.elements[q.id+"_other"];if(o&&o.value.trim())return o.value.trim()}
   var c=form.querySelector('input[name="'+q.id+'"]:checked');return c?c.value:"";
 }
 function refresh(){
@@ -207,6 +215,9 @@ function refresh(){
 
 render(); refresh();
 form.addEventListener("input",function(e){
+  var t=e.target;
+  if(t.classList&&t.classList.contains("other")&&t.value.trim()) form.querySelectorAll('input[name="'+t.dataset.for+'"]').forEach(function(r){r.checked=false});
+  if(t.type==="radio"){var o=form.elements[t.name+"_other"];if(o)o.value=""}
   var w=e.target.closest(".card"); if(w&&w.classList.contains("bad")){var q=ALL.filter(function(x){return "w_"+x.id===w.id})[0]; if(q&&val(q)) w.classList.remove("bad")}
   refresh();
 });
