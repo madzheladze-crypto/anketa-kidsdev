@@ -1,6 +1,6 @@
 /**
  * Запись на консультации МГУ — скрипт для таблицы «Профтест».
- * Установка: в таблице «Расширения → Apps Script», вставить этот код,
+ * Установка: отдельный проект на script.new (или «Расширения → Apps Script» в таблице),
  * «Начать развертывание → Новое развертывание → Веб-приложение»,
  * запуск от имени «Я», доступ «Все». Адрес /exec вставить в zapis-mgu.html (SCRIPT_URL).
  *
@@ -9,11 +9,13 @@
  * дальше строки слотов (дата пишется в первой строке дня).
  * Слот свободен, если ячейка «ФИ ребенка» пустая.
  */
+const SPREADSHEET_ID = '1k1NkxGE4ASwA06DNS5eL3G9g3--nQi61pF-2jfyqkn0'; // таблица «Профтест»
 const SHEET_NAME = 'Расписание консультаций';
+const book_ = () => SpreadsheetApp.openById(SPREADSHEET_ID);
 const LOG_SHEET = 'Записи (журнал)';
 
 function readSlots_() {
-  const sh = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  const sh = book_().getSheetByName(SHEET_NAME);
   if (!sh) throw new Error('Нет листа «' + SHEET_NAME + '»');
   const v = sh.getDataRange().getDisplayValues();
   const slots = [];
@@ -70,10 +72,10 @@ function doPost(e) {
     const slot = readSlots_().find(s => s.id === p.slot);
     if (!slot) return json_({ ok: false, error: 'notfound' });
     if (!slot.free) return json_({ ok: false, error: 'taken' });
-    const sh = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+    const sh = book_().getSheetByName(SHEET_NAME);
     sh.getRange(slot.row, slot.fi).setValue(child);
     if (slot.ct > 0) sh.getRange(slot.row, slot.ct).setValue([parent, contact].filter(Boolean).join(', '));
-    const ss = SpreadsheetApp.getActive();
+    const ss = book_();
     const log = ss.getSheetByName(LOG_SHEET) || ss.insertSheet(LOG_SHEET);
     if (log.getLastRow() === 0) {
       log.appendRow(['Когда записались', 'Консультант', 'Дата', 'Время (мск)', 'ФИ ребёнка', 'Родитель', 'Контакт']);
