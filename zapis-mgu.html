@@ -167,8 +167,8 @@ button.send:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 </style>
 
 <script>
-/* SCRIPT_URL — адрес веб-приложения Apps Script из таблицы «Профтест» (см. apps-script-zapis-mgu.gs) */
-const SCRIPT_URL = "";
+/* SCRIPT_URL — веб-приложение из таблицы «Запись на консультации МГУ — брони» (см. apps-script-zapis-mgu.gs) */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxq6aIikz41JG49b9nHP9Z0YKJnSApoxnVzU9OX1doo14xBva5BSpVJJ1UqdrpI4lX/exec";
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const COLS = ["var(--team)","var(--franchise)","var(--career)"];
